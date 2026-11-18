@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RecycLoop - DOM Manipulation & Timers (Prac 10)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f9f4;
+            color: #1b4332;
+            padding: 30px;
+        }
+        .box {
+            max-width: 680px;
+            margin: 0 auto 20px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #52b788;
+        }
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid #95d5b2;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #2d6a4f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        button.stop { background-color: #c92a2a; }
+        .readout {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Section 1: Interactive Form Element + querySelector + IDs -->
+    <div class="box">
+        <h2>1. RecycLoop Instant Payout & Carbon Estimator</h2>
+        <select id="materialType">
+            <option value="18">PET Plastic (₹18/kg)</option>
+            <option value="45">E-Waste & PCBs (₹45/kg)</option>
+            <option value="110">Scrap Aluminum (₹110/kg)</option>
+        </select>
+        <input type="number" id="weightKg" placeholder="Enter weight (kg)" min="1" value="5">
+        <button onclick="calculateValue()">Calculate Payout</button>
+        <div id="calcOutput" class="readout">Estimated Payout: ₹90 | CO₂ Offset: 12.5 kg</div>
+    </div>
+
+    <!-- Section 2: setTimeout() & clearTimeout() -->
+    <div class="box">
+        <h2>2. Delayed Pickup Dispatch (setTimeout / clearTimeout)</h2>
+        <button onclick="scheduleDispatch()">Schedule Truck (3s Delay)</button>
+        <button class="stop" onclick="cancelDispatch()">Cancel Dispatch</button>
+        <div id="timeoutStatus" class="readout">Status: Ready to dispatch collection vehicle.</div>
+    </div>
+
+    <!-- Section 3: setInterval() & clearInterval() (Upgrades your Live Time tab) -->
+    <div class="box">
+        <h2>3. Live Facility Clock & Waste Counter (setInterval / clearInterval)</h2>
+        <button onclick="startLiveFeed()">Start Live Feed</button>
+        <button class="stop" onclick="stopLiveFeed()">Stop Live Feed</button>
+        <div id="liveClock" class="readout">Clock: Click "Start Live Feed"</div>
+        <div id="wasteCounter" class="readout">Live City Waste Diverted: 14,820 kg</div>
+    </div>
+
+    <script>
+        // 1. querySelector & IDs
+        function calculateValue() {
+            const rate = parseFloat(document.querySelector('#materialType').value);
+            const kg = parseFloat(document.getElementById('weightKg').value) || 0;
+            const payout = rate * kg;
+            const co2 = (kg * 2.5).toFixed(1);
+            document.getElementById('calcOutput').innerText = `Estimated Payout: ₹${payout} | CO₂ Offset: ${co2} kg`;
+        }
+
+        // 2. setTimeout & clearTimeout
+        let dispatchTimer;
+        function scheduleDispatch() {
+            document.getElementById('timeoutStatus').innerText = "Dispatching RecycLoop truck in 3 seconds...";
+            dispatchTimer = setTimeout(() => {
+                document.getElementById('timeoutStatus').innerText = "✓ Truck Dispatched to your doorstep!";
+            }, 3000);
+        }
+
+        function cancelDispatch() {
+            clearTimeout(dispatchTimer);
+            document.getElementById('timeoutStatus').innerText = "✕ Dispatch cancelled before timer completed.";
+        }
+
+        // 3. setInterval & clearInterval
+        let liveInterval = null;
+        let totalKg = 14820;
+
+        function startLiveFeed() {
+            if (liveInterval) return;
+            liveInterval = setInterval(() => {
+                totalKg += 2;
+                document.getElementById('liveClock').innerText = "Live Hub Time: " + new Date().toString();
+                document.getElementById('wasteCounter').innerText = `Live City Waste Diverted: ${totalKg.toLocaleString()} kg`;
+            }, 1000);
+        }
+
+        function stopLiveFeed() {
+            clearInterval(liveInterval);
+            liveInterval = null;
+        }
+    </script>
+
+</body>
+</html>
